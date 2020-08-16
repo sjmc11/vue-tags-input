@@ -7,6 +7,8 @@ import { createTags, createTag, createClasses, clone } from './create-tags';
 import TagInput from './tag-input.vue';
 import props from './vue-tags-input.props';
 
+import { createPopper } from '@popperjs/core';
+
 export default {
   name: 'VueTagsInput',
   components: { TagInput },
@@ -368,6 +370,9 @@ export default {
       // Hide autocomplete layer
       this.focused = false;
     },
+    togglePopperMenu(){
+      // toggle popper menu
+    }
   },
   watch: {
     value(newValue){
@@ -382,7 +387,12 @@ export default {
       },
       deep: true,
     },
-    autocompleteOpen: 'selectDefaultItem',
+    autocompleteOpen: function(){
+      this.selectDefaultItem();
+      if(this.autocompleteOpen) {
+        this.togglePopperMenu();
+      }
+    },
   },
   created() {
     this.newTag = this.value;
@@ -391,6 +401,28 @@ export default {
   mounted() {
     // We select a default item based on props in the autocomplete
     this.selectDefaultItem();
+    if(this.usePopper){
+      const button = document.querySelector('#popperBtn');
+
+      const tooltip = this.$refs['menuContent'];
+      document.body.appendChild(tooltip);
+
+      console.log(tooltip);
+
+      // const tooltip = document.querySelector('#popperMenu');
+
+      createPopper(button, tooltip, {
+        placement: 'bottom-start',
+        offset: [0, 20],
+        modifiers: [
+          {
+            name: 'flip',
+            enabled: false,
+          },
+        ],
+        strategy: 'fixed',
+      });
+    }
 
     // We add a event listener to hide autocomplete on blur
     document.addEventListener('click', this.blurredOnClick);

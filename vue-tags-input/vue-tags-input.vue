@@ -7,6 +7,7 @@
   <div
     class="vue-tags-input"
     :class="[{ 'ti-disabled': disabled }, { 'ti-focus': focused }]"
+    id="popperBtn"
   >
     <div class="ti-input">
       <ul v-if="tagsCopy" class="ti-tags">
@@ -147,11 +148,12 @@
       </ul>
     </div>
     <slot name="between-elements" />
-    <div
-      v-if="autocompleteOpen"
-      class="ti-autocomplete"
-      @mouseout="selectedItem = null"
-    >
+    <div ref="menuContent"
+      v-show="autocompleteOpen"
+      :class="{'ti-autocomplete': !usePopper, 'popper-menu': usePopper, 'dark': popperDarkMode}"
+      id="popperMenu"
+      @mouseout="selectedItem = null">
+      <div id="arrow" data-popper-arrow v-if="usePopper"></div>
       <slot name="autocomplete-header" />
       <ul>
         <li
@@ -164,12 +166,10 @@
             { 'ti-selected-item': isSelected(index) }
           ]"
           class="ti-item"
-          @mouseover="disabled ? false : selectedItem = index"
-        >
+          @mouseover="disabled ? false : selectedItem = index">
           <div
             v-if="!$scopedSlots['autocomplete-item']"
-            @click="performAddTags(item, undefined, 'autocomplete')"
-          >
+            @click="performAddTags(item, undefined, 'autocomplete')">
             {{ item.text }}
           </div>
           <slot
@@ -178,8 +178,7 @@
             :item="item"
             :index="index"
             :perform-add="item => performAddTags(item, undefined, 'autocomplete')"
-            :selected="isSelected(index)"
-          />
+            :selected="isSelected(index)"/>
         </li>
       </ul>
       <slot name="autocomplete-footer" />

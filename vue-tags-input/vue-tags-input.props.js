@@ -341,4 +341,15 @@ export default {
     default: true,
     type: Boolean,
   },
+  /**
+   * Custom option to use toggle popper.js menu for autocompletion
+   */
+  usePopper: {
+    default: false,
+    type: Boolean,
+  },
+  popperDarkMode: {
+    default: false,
+    type: Boolean
+  }
 };
